@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29519.181
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModPlus_Revit", "ModPlus_Revit\ModPlus_Revit.csproj", "{E5C56E8E-C651-4C3B-A43C-903D154F7A0D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		R2017|x64 = R2017|x64
+		R2018|x64 = R2018|x64
+		R2019|x64 = R2019|x64
+		R2020|x64 = R2020|x64
+		R2021|x64 = R2021|x64
+		R2022|x64 = R2022|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E5C56E8E-C651-4C3B-A43C-903D154F7A0D}.Debug|x64.ActiveCfg = Debug|x64
+		{E5C56E8E-C651-4C3B-A43C-903D154F7A0D}.R2017|x64.ActiveCfg = R2017|x64
+		{E5C56E8E-C651-4C3B-A43C-903D154F7A0D}.R2017|x64.Build.0 = R2017|x64
+		{E5C56E8E-C651-4C3B-A43C-903D154F7A0D}.R2018|x64.ActiveCfg = R2018|x64
+		{E5C56E8E-C651-4C3B-A43C-903D154F7A0D}.R2018|x64.Build.0 = R2018|x64
+		{E5C56E8E-C651-4C3B-A43C-903D154F7A0D}.R2019|x64.ActiveCfg = R2019|x64
+		{E5C56E8E-C651-4C3B-A43C-903D154F7A0D}.R2019|x64.Build.0 = R2019|x64
+		{E5C56E8E-C651-4C3B-A43C-903D154F7A0D}.R2020|x64.ActiveCfg = R2020|x64
+		{E5C56E8E-C651-4C3B-A43C-903D154F7A0D}.R2020|x64.Build.0 = R2020|x64
+		{E5C56E8E-C651-4C3B-A43C-903D154F7A0D}.R2021|x64.ActiveCfg = R2021|x64
+		{E5C56E8E-C651-4C3B-A43C-903D154F7A0D}.R2021|x64.Build.0 = R2021|x64
+		{E5C56E8E-C651-4C3B-A43C-903D154F7A0D}.R2022|x64.ActiveCfg = R2022|x64
+		{E5C56E8E-C651-4C3B-A43C-903D154F7A0D}.R2022|x64.Build.0 = R2022|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D569A422-4C18-4F97-89D2-02CFA257F0D5}
+	EndGlobalSection
+EndGlobal

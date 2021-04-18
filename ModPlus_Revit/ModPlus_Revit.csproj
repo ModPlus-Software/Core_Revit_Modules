@@ -1,0 +1,151 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+   <PropertyGroup>
+    <Version>6.5.1.0</Version>
+    <RootNamespace>ModPlus_Revit</RootNamespace>
+    <AssemblyName>$(RootNamespace)</AssemblyName>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Company>ModPlus Software</Company>
+    <PackageIcon>ModPlus.png</PackageIcon>
+    <Authors>ModPlus Software</Authors>
+    <Product>ModPlus</Product>
+    <Copyright>Copyright © ModPlus</Copyright>
+    <Description>ModPlus initialization loading module in Revit. The main ModPlus module for Revit, which is loaded first and loads the necessary plugins, auxiliary libraries. Contains some common helper methods</Description>
+    <PackageTags>ModPlus BIM Revit API Autodesk</PackageTags>
+    <PackageProjectUrl>https://github.com/ModPlus-Software/Core_Revit_Modules</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/ModPlus-Software/Core_Revit_Modules.git</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageOutputPath>bin\Package</PackageOutputPath>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <CodeAnalysisRuleSet>$(SolutionDir)\ModPlus.ruleset</CodeAnalysisRuleSet>
+    <Platform>x64</Platform>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <Optimize>false</Optimize>
+    <Prefer32Bit>false</Prefer32Bit>
+    <UseWpf>true</UseWpf>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'R2017'">
+    <TargetFramework>net452</TargetFramework>
+    <Description>2017</Description>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'R2018'">
+    <TargetFramework>net452</TargetFramework>
+    <Description>2018</Description>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'R2019'">
+    <TargetFramework>net47</TargetFramework>
+    <Description>2019</Description>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'R2020'">
+    <TargetFramework>net47</TargetFramework>
+    <Description>2020</Description>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'R2021'">
+    <TargetFramework>net48</TargetFramework>
+    <Description>2021</Description>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'R2022' or '$(Configuration)' == 'Debug'">
+    <TargetFramework>net48</TargetFramework>
+    <Description>2022</Description>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <Configurations>Debug</Configurations>
+    <DefineConstants>Debug;R$(Description)</DefineConstants>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' != 'Debug'">
+    <Configurations>R$(Description)</Configurations>
+    <DefineConstants>R$(Description)</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>ModPlus.Revit.Module.$(Description)</PackageId>
+    <AssemblyName>$(AssemblyName)_$(Description)</AssemblyName>
+  </PropertyGroup>
+
+  <Choose>
+    <When Condition="'$(Configuration)'=='R2017'">
+      <ItemGroup>
+        <PackageReference Include="ModPlus.Revit.API.2017" Version="1.0.0" ExcludeAssets="runtime" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Configuration)'=='R2018'">
+      <ItemGroup>
+        <PackageReference Include="ModPlus.Revit.API.2018" Version="1.0.0" ExcludeAssets="runtime" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Configuration)'=='R2019'">
+      <ItemGroup>
+        <PackageReference Include="ModPlus.Revit.API.2019" Version="1.0.0" ExcludeAssets="runtime" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Configuration)'=='R2020'">
+      <ItemGroup>
+        <PackageReference Include="ModPlus.Revit.API.2020" Version="1.0.0" ExcludeAssets="runtime" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Configuration)'=='R2021'">
+      <ItemGroup>
+        <PackageReference Include="ModPlus.Revit.API.2021" Version="1.0.0" ExcludeAssets="runtime" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Configuration)'=='R2022' or '$(Configuration)'=='Debug'">
+      <ItemGroup>
+        <PackageReference Include="ModPlus.Revit.API.2022" Version="1.0.0" ExcludeAssets="runtime" />
+      </ItemGroup>
+    </When>
+  </Choose>
+
+  <ItemGroup>
+    <None Remove="Resources\mprFeedback_16x16.png" />
+    <None Remove="Resources\mprSettings_16x16.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2020.1.0" ExcludeAssets="runtime" />
+    <PackageReference Include="ModPlusAPI" Version="7.0.0" ExcludeAssets="runtime" />
+    <PackageReference Include="ModPlusStyle" Version="3.8.0" ExcludeAssets="runtime" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="ModPlus.png" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Flags\be-BY.png" />
+    <Resource Include="Resources\Flags\de-DE.png" />
+    <Resource Include="Resources\Flags\en-US.png" />
+    <Resource Include="Resources\Flags\ru-RU.png" />
+    <Resource Include="Resources\Flags\uk-UA.png" />
+    <Resource Include="Resources\forIcon_256.png" />
+    <Resource Include="Resources\HelpBt.png" />
+    <Resource Include="Resources\mprFeedback_16x16.png" />
+    <Resource Include="Resources\mprSettings_16x16.png" />
+    <Resource Include="Resources\UserInfo_32x32.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\" />
+    <Folder Include="Services\" />
+    <Folder Include="View\" />
+  </ItemGroup>
+  
+</Project>
