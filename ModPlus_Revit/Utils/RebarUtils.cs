@@ -3,10 +3,12 @@
     using System;
     using Autodesk.Revit.DB.Structure;
     using Enums;
+    using JetBrains.Annotations;
 
     /// <summary>
     /// Утилиты армирования
     /// </summary>
+    [PublicAPI]
     public static class RebarUtils
     {
         /// <summary>

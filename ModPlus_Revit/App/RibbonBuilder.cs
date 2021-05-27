@@ -9,6 +9,7 @@
     using Autodesk.Revit.UI;
     using Autodesk.Windows;
     using Helpers;
+    using JetBrains.Annotations;
     using ModPlusAPI;
     using ModPlusAPI.Windows;
     using RibbonItem = Autodesk.Revit.UI.RibbonItem;
@@ -21,6 +22,7 @@
     {
         private const string TabName = "ModPlus";
         private const string LangItem = "RevitDlls";
+        private static bool _errMessageDisplayed;
 
         /// <summary>
         /// Create ModPlus ribbon
@@ -30,8 +32,6 @@
         {
             try
             {
-                application.CreateRibbonTab(TabName);
-
                 // create and fill panels
                 AddPanels(application);
 
@@ -80,10 +80,29 @@
         /// <param name="tabName">Имя вкладки</param>
         public static void CreateTabIfNoExist(UIControlledApplication application, string tabName)
         {
-            var ribbon = ComponentManager.Ribbon;
-            if (ribbon.Tabs.All(t => t.Name != tabName))
+            if (HasTab(tabName))
+                return;
+
+            try
             {
                 application.CreateRibbonTab(tabName);
+            }
+            catch (Autodesk.Revit.Exceptions.InvalidOperationException exception)
+            {
+                if (exception.Message.Contains("Too many tabs have been created by the API"))
+                {
+                    if (!_errMessageDisplayed)
+                    {
+                        MessageBox.Show(
+                          string.Format(Language.GetItem(LangItem, "err3"), tabName),
+                          MessageBoxIcon.Close);
+                        _errMessageDisplayed = true;
+                    }
+                }
+                else
+                {
+                    throw;
+                }
             }
         }
 
@@ -164,24 +183,29 @@
         /// <param name="application"><see cref="UIControlledApplication"/></param>
         /// <param name="tabName">Имя вкладки</param>
         /// <param name="panelName">Имя панели</param>
+        [CanBeNull]
         public static RibbonPanel GetOrCreateRibbonPanel(
             UIControlledApplication application, string tabName, string panelName)
         {
             RibbonPanel panel = null;
             CreateModPlusTabIfNoExist(application);
-            var rPanels = application.GetRibbonPanels(tabName);
-            foreach (var rPanel in rPanels)
+            
+            if (HasTab(tabName))
             {
-                if (rPanel.Name.Equals(panelName))
+                var panels = application.GetRibbonPanels(tabName);
+                foreach (var rPanel in panels)
                 {
-                    panel = rPanel;
-                    break;
+                    if (rPanel.Name.Equals(panelName))
+                    {
+                        panel = rPanel;
+                        break;
+                    }
                 }
+
+                if (panel == null)
+                    panel = application.CreateRibbonPanel(tabName, panelName);
             }
-
-            if (panel == null)
-                panel = application.CreateRibbonPanel(tabName, panelName);
-
+            
             return panel;
         }
 
@@ -210,6 +234,9 @@
                             application,
                             TabName,
                             Language.TryGetCuiLocalGroupName(groupNameAttr.Value));
+
+                        if (panel == null)
+                            continue;
 
                         // Проходим по функциям группы
                         foreach (var item in group.Elements())
@@ -365,7 +392,13 @@
         private static void AddHelpPanel(UIControlledApplication application)
         {
             // create the panel
-            var panel = application.CreateRibbonPanel(TabName, TabName);
+            var panel = GetOrCreateRibbonPanel(
+                application,
+                TabName,
+                TabName);
+
+            if (panel == null)
+                return;
 
             // user info
             var userInfoButton = new PushButtonData(
@@ -391,7 +424,7 @@
             settingsButton.Image = image;
             settingsButton.LargeImage = image;
             settingsButton.SetContextualHelp(new ContextualHelp(ContextualHelpType.Url, GetHelpUrl("mpsettings", "help")));
-            
+
             // feedback
             var feedbackButton = new PushButtonData(
                 "mprFeedback",
@@ -405,9 +438,9 @@
             feedbackButton.Image = image;
             feedbackButton.LargeImage = image;
             feedbackButton.SetContextualHelp(new ContextualHelp(ContextualHelpType.Url, GetHelpUrl("feedback", "help")));
-            
+
             panel.AddStackedItems(settingsButton, feedbackButton);
-            
+
             HideTextOfSmallButtons(TabName, new List<string> { "mprSettings", "mprFeedback" });
         }
 
@@ -536,6 +569,11 @@
             }
 
             return false;
+        }
+
+        private static bool HasTab(string tabName)
+        {
+            return ComponentManager.Ribbon.Tabs.Any(t => t.Name == tabName);
         }
     }
 }
