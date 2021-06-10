@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
-   <PropertyGroup>
-    <Version>6.5.2.0</Version>
+  <PropertyGroup>
+    <Version>7.0.0.0</Version>
     <RootNamespace>ModPlus_Revit</RootNamespace>
     <AssemblyName>$(RootNamespace)</AssemblyName>
   </PropertyGroup>
@@ -19,7 +19,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageOutputPath>bin\Package</PackageOutputPath>
   </PropertyGroup>
-  
+
   <PropertyGroup>
     <CodeAnalysisRuleSet>$(SolutionDir)\ModPlus.ruleset</CodeAnalysisRuleSet>
     <Platform>x64</Platform>
@@ -28,6 +28,7 @@
     <Prefer32Bit>false</Prefer32Bit>
     <UseWpf>true</UseWpf>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <MSBuildWarningsAsMessages>MSB3270</MSBuildWarningsAsMessages>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'R2017'">
@@ -90,22 +91,22 @@
     </When>
     <When Condition="'$(Configuration)'=='R2019'">
       <ItemGroup>
-        <PackageReference Include="ModPlus.Revit.API.2019" Version="1.0.0" ExcludeAssets="runtime" />
+        <PackageReference Include="ModPlus.Revit.API.2019" Version="2.0.0" ExcludeAssets="runtime" />
       </ItemGroup>
     </When>
     <When Condition="'$(Configuration)'=='R2020'">
       <ItemGroup>
-        <PackageReference Include="ModPlus.Revit.API.2020" Version="1.0.0" ExcludeAssets="runtime" />
+        <PackageReference Include="ModPlus.Revit.API.2020" Version="2.0.0" ExcludeAssets="runtime" />
       </ItemGroup>
     </When>
     <When Condition="'$(Configuration)'=='R2021'">
       <ItemGroup>
-        <PackageReference Include="ModPlus.Revit.API.2021" Version="1.0.0" ExcludeAssets="runtime" />
+        <PackageReference Include="ModPlus.Revit.API.2021" Version="2.0.0" ExcludeAssets="runtime" />
       </ItemGroup>
     </When>
     <When Condition="'$(Configuration)'=='R2022' or '$(Configuration)'=='Debug'">
       <ItemGroup>
-        <PackageReference Include="ModPlus.Revit.API.2022" Version="1.0.0" ExcludeAssets="runtime" />
+        <PackageReference Include="ModPlus.Revit.API.2022" Version="2.0.0" ExcludeAssets="runtime" />
       </ItemGroup>
     </When>
   </Choose>
@@ -113,6 +114,7 @@
   <ItemGroup>
     <None Remove="Resources\mprFeedback_16x16.png" />
     <None Remove="Resources\mprSettings_16x16.png" />
+    <None Remove="Resources\PlanIcon.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -139,13 +141,12 @@
     <Resource Include="Resources\HelpBt.png" />
     <Resource Include="Resources\mprFeedback_16x16.png" />
     <Resource Include="Resources\mprSettings_16x16.png" />
+    <Resource Include="Resources\PlanIcon.png" />
     <Resource Include="Resources\UserInfo_32x32.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
-    <Folder Include="Services\" />
     <Folder Include="View\" />
   </ItemGroup>
-  
+
 </Project>

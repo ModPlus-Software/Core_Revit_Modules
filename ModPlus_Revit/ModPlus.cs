@@ -8,6 +8,8 @@
     using System.Reflection;
     using System.Xml.Linq;
     using Autodesk.Revit.UI;
+    using Autodesk.Revit.UI.Events;
+    using Enums;
     using Helpers;
     using Microsoft.Win32;
     using ModPlusAPI;
@@ -15,19 +17,23 @@
     using ModPlusAPI.LicenseServer;
     using ModPlusAPI.UserInfo;
     using ModPlusAPI.Windows;
+    using Services;
 
     /// <inheritdoc />
     public class ModPlus : IExternalApplication
     {
+        private UIControlledApplication _application;
+
         /// <inheritdoc />
         public Result OnStartup(UIControlledApplication application)
         {
+            _application = application;
             try
             {
                 // init lang
                 if (!Language.Initialize())
                     return Result.Cancelled;
-                
+
                 // statistic
                 Statistic.SendModuleLoaded("Revit", VersionData.CurrentRevitVersion);
 
@@ -50,13 +56,17 @@
                 // license server
                 if (Variables.IsLocalLicenseServerEnable && !disableConnectionWithLicenseServer)
                     ClientStarter.StartConnection(SupportedProduct.Revit);
-                
+
                 if (Variables.IsWebLicenseServerEnable && !disableConnectionWithLicenseServer)
                     WebLicenseServerClient.Instance.Start(SupportedProduct.Revit);
 
                 // user info
                 AuthorizationOnStartup();
-                
+
+#if !R2017 && !R2018
+                application.Idling += ApplicationOnIdling;
+#endif
+
                 return Result.Succeeded;
             }
             catch (Exception exception)
@@ -68,13 +78,49 @@
             }
         }
 
+#if !R2017 && !R2018
+        private void ApplicationOnIdling(object sender, IdlingEventArgs e)
+        {
+            try
+            {
+                if (sender is UIApplication uiApp)
+                {
+                    if (TabColorizer == null)
+                    {
+                        TabColorizer = new TabColorizer(uiApp);
+                        var schemeName = UserConfigFile.GetValue("Revit", "ColorizeTabsSchemeName");
+                        TabColorizer.SetState(
+                            bool.TryParse(UserConfigFile.GetValue("Revit", "ColorizeTabs"), out var b) && b,
+                            !string.IsNullOrEmpty(schemeName) ? schemeName : "Happy Like Pastels",
+                            Enum.TryParse(UserConfigFile.GetValue("Revit", "ColorizeTabsZone"), out TabColorizeZone z) ? z : TabColorizeZone.Background,
+                            int.TryParse(UserConfigFile.GetValue("Revit", "ColorizeTabsBorderThickness"), out var i) ? i : 4);
+                    }
+                    
+                    TabColorizer.Colorize();
+                }
+            }
+            catch (Exception exception)
+            {
+                ExceptionBox.Show(exception);
+                _application.Idling -= ApplicationOnIdling;
+            }
+        }
+#endif
+
         /// <inheritdoc />
         public Result OnShutdown(UIControlledApplication application)
         {
             ClientStarter.StopConnection();
             return Result.Succeeded;
         }
-                
+
+#if !R2017 && !R2018
+        /// <summary>
+        /// Статический экземпляр сервиса раскраски вкладок видов
+        /// </summary>
+        public static TabColorizer TabColorizer { get; private set; }
+#endif
+
         // Принудительная загрузка сборок
         // необходимых для работы
         private static void LoadAssemblies()
@@ -95,7 +141,7 @@
                 ExceptionBox.Show(exception);
             }
         }
-        
+
         // Загрузка плагинов
         private static void LoadPlugins()
         {
@@ -158,7 +204,7 @@
                 ExceptionBox.Show(exception);
             }
         }
-        
+
         /// <summary>
         /// Проверка загруженности модуля автообновления
         /// </summary>
@@ -247,7 +293,7 @@
             protected override WebRequest GetWebRequest(Uri uri)
             {
                 var w = base.GetWebRequest(uri);
-                
+
                 // ReSharper disable once PossibleNullReferenceException
                 w.Timeout = 3000;
                 return w;
