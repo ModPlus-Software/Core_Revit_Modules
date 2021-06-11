@@ -2,6 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.IO;
     using System.Linq;
     using System.Reflection;
     using System.Threading.Tasks;
@@ -428,6 +430,38 @@
                 OnPropertyChanged();
             }
 #endif
+        }
+
+        /// <summary>
+        /// Доступность сервиса раскраски по версии Revit
+        /// </summary>
+        public bool IsEnabledColorizeTabsForRevitVersion
+        {
+            get
+            {
+#if R2017 || R2018
+                return false;
+#elif R2019
+                var xceedFile = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Autodesk", "Revit 2019", "Xceed.Wpf.AvalonDock.dll");
+                if (File.Exists(xceedFile) &&
+                    Version.TryParse(FileVersionInfo.GetVersionInfo(xceedFile).FileVersion, out var version))
+                {
+                    if (version.MinorRevision < 10)
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+
+                return true;
+#else
+                return true;
+#endif
+            }
         }
 
         /// <summary>

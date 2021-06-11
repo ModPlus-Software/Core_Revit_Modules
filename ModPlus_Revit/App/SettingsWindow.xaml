@@ -22,6 +22,9 @@
             <XmlDataProvider x:Key="LangApi" Source="E:/ModPlus/Languages/en-US.xml" XPath="ModPlus/ModPlusAPI"/>
             <converters:BooleanInverseConverter x:Key="BooleanInverseConverter"/>
             <converters:EnumToIntConverter x:Key="EnumToIntConverter"/>
+            <converters:BooleanToVisibilityConverter x:Key="FalseToVisibleConverter"
+                                                     TrueVisibility="Collapsed"
+                                                     FalseVisibility="Visible"/>
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
@@ -150,145 +153,156 @@
                           IsChecked="{Binding Path=ColorizeTabs, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </GroupBox.Header>
             <Grid Visibility="{Binding Path=ColorizeTabs, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-
-                <!-- description -->
+                
+                <!-- message for 2019 -->
                 <TextBlock Grid.Row="0"
                            Margin="{DynamicResource ModPlusDefaultMargin}"
                            TextWrapping="Wrap"
-                           Text="{Binding Source={StaticResource Lang}, XPath=c5}"
+                           Text="{Binding Source={StaticResource Lang}, XPath=c6}"
                            MaxWidth="400"
-                           HorizontalAlignment="Left"/>
+                           HorizontalAlignment="Left"
+                           Visibility="{Binding Path=IsEnabledColorizeTabsForRevitVersion, Converter={StaticResource FalseToVisibleConverter}}"/>
 
-                <!-- color scheme -->
-                <Grid Grid.Row="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
+                <Grid Visibility="{Binding Path=IsEnabledColorizeTabsForRevitVersion, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-                    <TextBlock Grid.Column="0"
+                    <!-- description -->
+                    <TextBlock Grid.Row="0"
+                               Margin="{DynamicResource ModPlusDefaultMargin}"
+                               TextWrapping="Wrap"
+                               Text="{Binding Source={StaticResource Lang}, XPath=c5}"
+                               MaxWidth="400"
+                               HorizontalAlignment="Left"/>
+
+                    <!-- color scheme -->
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0"
                                Margin="{DynamicResource ModPlusDefaultMargin}"
                                VerticalAlignment="Center"
                                Text="{Binding Source={StaticResource Lang}, XPath=c2}"/>
-                    <ComboBox Grid.Column="1"
+                        <ComboBox Grid.Column="1"
                               ItemsSource="{Binding Path=ColorizeSchemes}"
                               SelectedItem="{Binding Path=SelectedColorizeScheme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate DataType="{x:Type models:ColorizeScheme}">
-                                <TextBlock Text="{Binding Path=Name}"/>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                </Grid>
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate DataType="{x:Type models:ColorizeScheme}">
+                                    <TextBlock Text="{Binding Path=Name}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </Grid>
 
-                <!-- colors preview -->
-                <Border Grid.Row="2"
+                    <!-- colors preview -->
+                    <Border Grid.Row="2"
                         BorderThickness="1"
                         BorderBrush="{DynamicResource BoxesBorderBrush}"
                         Background="White"
                         Margin="{DynamicResource ModPlusDefaultMargin}">
-                    <ItemsControl Background="White"
+                        <ItemsControl Background="White"
                                   ItemsSource="{Binding Path=SelectedColorizeScheme.Brushes}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal"/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate DataType="{x:Type Brush}">
-                                <Border BorderThickness="1"
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type Brush}">
+                                    <Border BorderThickness="1"
                                         BorderBrush="{DynamicResource DarkGrayBrush}"
                                         Background="{Binding}"
                                         Margin="{DynamicResource ModPlusDefaultMargin}"
                                         Width="20"
                                         Height="20"/>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </Border>
-                
-                <!-- colorize zone and border thickness -->
-                <Grid Grid.Row="3">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Border>
 
-                    <TextBlock Grid.Column="0"
+                    <!-- colorize zone and border thickness -->
+                    <Grid Grid.Row="3">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0"
                                Margin="{DynamicResource ModPlusDefaultMargin}"
                                VerticalAlignment="Center"
                                Text="{Binding Source={StaticResource Lang}, XPath=c3}"/>
-                    <ComboBox Grid.Column="1"
+                        <ComboBox Grid.Column="1"
                               SelectedIndex="{Binding Path=ColorizeTabsZone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnumToIntConverter}, ConverterParameter={x:Type enums:TabColorizeZone}}">
-                        <!-- Background -->
-                        <ComboBoxItem Content="{Binding Source={StaticResource Lang}, XPath=cz1}"/>
-                        <!-- Left border -->
-                        <ComboBoxItem Content="{Binding Source={StaticResource Lang}, XPath=cz2}"/>
-                        <!-- Bottom border -->
-                        <ComboBoxItem Content="{Binding Source={StaticResource Lang}, XPath=cz3}"/>
-                        <!-- Top border -->
-                        <ComboBoxItem Content="{Binding Source={StaticResource Lang}, XPath=cz4}"/>
-                    </ComboBox>
+                            <!-- Background -->
+                            <ComboBoxItem Content="{Binding Source={StaticResource Lang}, XPath=cz1}"/>
+                            <!-- Left border -->
+                            <ComboBoxItem Content="{Binding Source={StaticResource Lang}, XPath=cz2}"/>
+                            <!-- Bottom border -->
+                            <ComboBoxItem Content="{Binding Source={StaticResource Lang}, XPath=cz3}"/>
+                            <!-- Top border -->
+                            <ComboBoxItem Content="{Binding Source={StaticResource Lang}, XPath=cz4}"/>
+                        </ComboBox>
 
-                    <TextBlock Grid.Column="2"
+                        <TextBlock Grid.Column="2"
                                Margin="{DynamicResource ModPlusDefaultMargin}"
                                VerticalAlignment="Center"
                                Text="{Binding Source={StaticResource Lang}, XPath=c4}"/>
-                    <AdornerDecorator Grid.Column="3"
+                        <AdornerDecorator Grid.Column="3"
                                       IsEnabled="{Binding Path=IsEnabledColorizeTabsBorderThickness}">
-                        <mps:NumericBox Value="{Binding Path=ColorizeTabsBorderThickness}"
+                            <mps:NumericBox Value="{Binding Path=ColorizeTabsBorderThickness}"
                                         Minimum="1"
                                         Maximum="10"/>
-                    </AdornerDecorator>
-                </Grid>
+                        </AdornerDecorator>
+                    </Grid>
 
-                <!-- preview -->
-                <Border Grid.Row="4"
+                    <!-- preview -->
+                    <Border Grid.Row="4"
                         Background="White"
                         BorderThickness="1"
                         BorderBrush="{DynamicResource BoxesBorderBrush}"
                         Margin="{DynamicResource ModPlusDefaultMargin}">
-                    <Border Margin="{DynamicResource ModPlusDefaultMargin}"
+                        <Border Margin="{DynamicResource ModPlusDefaultMargin}"
                             Background="#CCCCCC">
-                        <StackPanel Orientation="Horizontal"
+                            <StackPanel Orientation="Horizontal"
                                     Margin="0 2 0 0"
                                     HorizontalAlignment="Center">
-                            <Grid Height="20"
+                                <Grid Height="20"
                                   Width="120"
                                   Background="{Binding Path=ColorizePreviewFirstTabBackground}">
-                                <Border BorderThickness="{Binding Path=ColorizePreviewBorderThickness}"
+                                    <Border BorderThickness="{Binding Path=ColorizePreviewBorderThickness}"
                                         BorderBrush="{Binding Path=ColorizePreviewFirstBorderBrush}"/>
-                                <StackPanel Orientation="Horizontal">
-                                    <Image Height="16"
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Height="16"
                                            Width="16"
                                            Stretch="UniformToFill"
                                            Source="../Resources/PlanIcon.png"
                                            Margin="5 0 0 0"
                                            RenderOptions.EdgeMode="Unspecified"
                                            RenderOptions.BitmapScalingMode="NearestNeighbor"/>
-                                    <TextBlock Text="Tab 1"
+                                        <TextBlock Text="Tab 1"
                                                FontWeight="SemiBold"
                                                Foreground="Black"
                                                VerticalAlignment="Center"
                                                Margin="5 0 0 0"/>
-                                </StackPanel>
-                            </Grid>
-                            <Grid Height="20"
+                                    </StackPanel>
+                                </Grid>
+                                <Grid Height="20"
                                   Width="120"
                                   Background="{Binding Path=ColorizePreviewSecondTabBackground}">
-                                <Border BorderThickness="{Binding Path=ColorizePreviewBorderThickness}"
+                                    <Border BorderThickness="{Binding Path=ColorizePreviewBorderThickness}"
                                         BorderBrush="{Binding Path=ColorizePreviewSecondBorderBrush}"/>
-                                <StackPanel Orientation="Horizontal">
-                                    <Image Height="16"
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Height="16"
                                            Width="16"
                                            Stretch="UniformToFill"
                                            Source="../Resources/PlanIcon.png"
@@ -296,20 +310,20 @@
                                            Opacity="0.5"
                                            RenderOptions.EdgeMode="Unspecified"
                                            RenderOptions.BitmapScalingMode="NearestNeighbor"/>
-                                    <TextBlock Text="Tab 2"
+                                        <TextBlock Text="Tab 2"
                                                FontWeight="SemiBold"
                                                Foreground="Black"
                                                VerticalAlignment="Center"
                                                Margin="5 0 0 0"/>
-                                </StackPanel>
-                            </Grid>
-                            <Grid Height="20"
+                                    </StackPanel>
+                                </Grid>
+                                <Grid Height="20"
                                   Width="120"
                                   Background="{Binding Path=ColorizePreviewThirdTabBackground}">
-                                <Border BorderThickness="{Binding Path=ColorizePreviewBorderThickness}"
+                                    <Border BorderThickness="{Binding Path=ColorizePreviewBorderThickness}"
                                         BorderBrush="{Binding Path=ColorizePreviewThirdBorderBrush}"/>
-                                <StackPanel Orientation="Horizontal">
-                                    <Image Height="16"
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Height="16"
                                            Width="16"
                                            Stretch="UniformToFill"
                                            Source="../Resources/PlanIcon.png"
@@ -317,16 +331,17 @@
                                            Opacity="0.5"
                                            RenderOptions.EdgeMode="Unspecified"
                                            RenderOptions.BitmapScalingMode="NearestNeighbor"/>
-                                    <TextBlock Text="Tab 3"
+                                        <TextBlock Text="Tab 3"
                                                FontWeight="SemiBold"
                                                Foreground="Black"
                                                VerticalAlignment="Center"
                                                Margin="5 0 0 0"/>
-                                </StackPanel>
-                            </Grid>
-                        </StackPanel>
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
                     </Border>
-                </Border>
+                </Grid>
             </Grid>
         </GroupBox>
 

@@ -83,6 +83,24 @@
         {
             try
             {
+#if R2019
+                var xceedFile = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Autodesk", "Revit 2019", "Xceed.Wpf.AvalonDock.dll");
+                if (File.Exists(xceedFile) &&
+                    Version.TryParse(FileVersionInfo.GetVersionInfo(xceedFile).FileVersion, out var version))
+                {
+                    if (version.MinorRevision < 10)
+                    {
+                        _application.Idling -= ApplicationOnIdling;
+                        return;
+                    }
+                }
+                else
+                {
+                    _application.Idling -= ApplicationOnIdling;
+                    return;
+                }
+#endif
                 if (sender is UIApplication uiApp)
                 {
                     if (TabColorizer == null)
@@ -95,7 +113,7 @@
                             Enum.TryParse(UserConfigFile.GetValue("Revit", "ColorizeTabsZone"), out TabColorizeZone z) ? z : TabColorizeZone.Background,
                             int.TryParse(UserConfigFile.GetValue("Revit", "ColorizeTabsBorderThickness"), out var i) ? i : 4);
                     }
-                    
+
                     TabColorizer.Colorize();
                 }
             }
