@@ -114,7 +114,7 @@
                             int.TryParse(UserConfigFile.GetValue("Revit", "ColorizeTabsBorderThickness"), out var i) ? i : 4);
                     }
 
-                    TabColorizer.Colorize();
+                    _application.Idling -= ApplicationOnIdling;
                 }
             }
             catch (FileNotFoundException)

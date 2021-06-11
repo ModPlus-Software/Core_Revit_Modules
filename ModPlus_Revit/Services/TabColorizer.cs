@@ -172,7 +172,9 @@
             _colorize = colorize;
             if (colorize && !_wasSetToTrue)
             {
-                _uiApplication.ViewActivated += UIApplicationOnViewActivated;
+                _uiApplication.ViewActivated += (sender, args) => Colorize();
+                _uiApplication.Application.DocumentOpened += (sender, args) => Colorize();
+                _uiApplication.Application.DocumentCreated += (sender, args) => Colorize();
                 _uiApplication.Application.DocumentClosing += ApplicationOnDocumentClosing;
             }
 
@@ -287,12 +289,7 @@
                 tabItem.BorderBrush = brush;
             }
         }
-
-        private void UIApplicationOnViewActivated(object sender, ViewActivatedEventArgs e)
-        {
-            Colorize();
-        }
-
+        
         private void ApplicationOnDocumentClosing(object sender, DocumentClosingEventArgs e)
         {
             var documentPointer = GetDocumentPointer(e.Document);
