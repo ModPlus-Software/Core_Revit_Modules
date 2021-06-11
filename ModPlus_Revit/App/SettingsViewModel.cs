@@ -703,7 +703,7 @@
 #if !R2017 && !R2018
                 var savedColorizeSchemeName = UserConfigFile.GetValue("Revit", "ColorizeTabsSchemeName");
                 var savedColorizeScheme = ColorizeSchemes.FirstOrDefault(s => s.Name == savedColorizeSchemeName);
-                _selectedColorizeScheme = savedColorizeScheme ?? ColorizeSchemes.First();
+                _selectedColorizeScheme = savedColorizeScheme ?? ColorizeSchemes.FirstOrDefault();
 #endif
 
                 CanStopLocalLicenseServerConnection = ClientStarter.IsClientWorking();
@@ -711,6 +711,10 @@
                     Variables.IsWebLicenseServerEnable &&
                     !Variables.DisableConnectionWithLicenseServerInAutoCAD &&
                     WebLicenseServerClient.Instance.IsWorked;
+            }
+            catch (FileNotFoundException)
+            {
+                // ignore
             }
             catch (Exception exception)
             {
@@ -726,12 +730,15 @@
             try
             {
 #if !R2017 && !R2018
-                ModPlus.TabColorizer.SetState(
-                    ColorizeTabs,
-                    SelectedColorizeScheme.Name,
-                    ColorizeTabsZone,
-                    ColorizeTabsBorderThickness);
-                ModPlus.TabColorizer.Colorize();
+                if (ModPlus.TabColorizer != null)
+                {
+                    ModPlus.TabColorizer.SetState(
+                        ColorizeTabs,
+                        SelectedColorizeScheme?.Name,
+                        ColorizeTabsZone,
+                        ColorizeTabsBorderThickness);
+                    ModPlus.TabColorizer.Colorize();
+                }
 #endif
 
                 if (_restartClientOnClose)
@@ -745,6 +752,10 @@
                     WebLicenseServerClient.Instance.Stop();
                 if (IsWebLicenseServerEnable && !WebLicenseServerClient.Instance.IsWorked)
                     WebLicenseServerClient.Instance.Start(SupportedProduct.Revit);
+            }
+            catch (FileNotFoundException)
+            {
+                // ignore
             }
             catch (Exception ex)
             {

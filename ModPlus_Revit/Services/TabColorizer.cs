@@ -168,7 +168,7 @@
             _documentBrushes.Clear();
             _borderThickness = borderThickness;
             _colorizeZone = colorizeZone;
-            _schemeName = schemeName;
+            _schemeName = !string.IsNullOrEmpty(schemeName) ? schemeName : "Happy Like Pastels";
             _colorize = colorize;
             if (colorize && !_wasSetToTrue)
             {

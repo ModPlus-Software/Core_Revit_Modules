@@ -117,6 +117,10 @@
                     TabColorizer.Colorize();
                 }
             }
+            catch (FileNotFoundException)
+            {
+                _application.Idling -= ApplicationOnIdling;
+            }
             catch (Exception exception)
             {
                 ExceptionBox.Show(exception);
