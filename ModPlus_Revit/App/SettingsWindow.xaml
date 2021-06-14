@@ -8,6 +8,8 @@
                    xmlns:app="clr-namespace:ModPlus_Revit.App"
                    xmlns:models="clr-namespace:ModPlus_Revit.Models"
                    xmlns:enums="clr-namespace:ModPlus_Revit.Enums"
+                   xmlns:controls="clr-namespace:ModPlusStyle.ColorPicker.Controls;assembly=ModPlusStyle"
+                   xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                    mc:Ignorable="d"
                    SizeToContent="WidthAndHeight"
                    ResizeMode="NoResize"
@@ -27,143 +29,20 @@
                                                      FalseVisibility="Visible"/>
         </ResourceDictionary>
     </Window.Resources>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+
+    <b:Interaction.Triggers>
+        <b:EventTrigger EventName="Closing">
+            <b:InvokeCommandAction Command="{Binding Path=OnClosingCommand}"/>
+        </b:EventTrigger>
+    </b:Interaction.Triggers>
+
+    <TabControl>
 
         <!-- main settings -->
-        <GroupBox Header="{Binding Source={StaticResource Lang}, XPath=h2}" Grid.Row="0" >
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-
-                <!--Language-->
-                <TextBlock Grid.Row="0"
-                           Margin="{DynamicResource ModPlusDefaultMargin}"
-                           Grid.Column="0" Text="{Binding Source={StaticResource Lang}, XPath=h5}"/>
-                <ComboBox Grid.Row="0"
-                          Grid.Column="1" 
-                          Margin="{DynamicResource ModPlusDefaultMargin}"
-                          ItemsSource="{Binding Path=Languages}"
-                          SelectedItem="{Binding Path=SelectedLanguage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Path=DisplayName}"/>
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-
-                <Image Grid.Column="2"
-                       Grid.Row="0"
-                       Height="24"
-                       Stretch="UniformToFill"
-                       HorizontalAlignment="Left"
-                       Source="{Binding Path=LanguageImage}"
-                       Margin="{DynamicResource ModPlusDefaultMargin}"
-                       Name="LanguageImage" UseLayoutRounding="False"
-                       RenderOptions.BitmapScalingMode="HighQuality"/>
-
-                <TextBlock Grid.Row="1"
-                           Grid.Column="0"
-                           Grid.ColumnSpan="4"
-                           Visibility="{Binding Path=MessageAboutLanguageVisibility}"
-                           TextWrapping="Wrap" MaxWidth="400"
-                           HorizontalAlignment="Center" TextAlignment="Center"
-                           Text="{Binding Source={StaticResource Lang}, XPath=h14}"
-                           Name="TbMessageAboutLanguage"
-                           FontWeight="SemiBold" Foreground="{DynamicResource ErrorBrush}"/>
-
-                <!--Theme-->
-                <TextBlock Grid.Row="2"
-                           Grid.Column="0"
-                           Margin="{DynamicResource ModPlusDefaultMargin}"
-                           Text="{Binding Source={StaticResource Lang}, XPath=h6}"></TextBlock>
-                <ComboBox Grid.Row="2"
-                          Grid.Column="1"
-                          ItemsSource="{Binding Path=Themes}"
-                          SelectedItem="{Binding Path=SelectedTheme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate DataType="mps:Theme">
-                            <StackPanel Orientation="Horizontal">
-                                <Border CornerRadius="4" Width="40" Height="30"
-                                        Background="{Binding Path=ShowCaseBackgroundBrush}">
-                                    <Ellipse HorizontalAlignment="Center" VerticalAlignment="Center"
-                                             Width="20" Height="20"
-                                             Fill="{Binding Path=ShowcaseBrush}"></Ellipse>
-                                </Border>
-                                <TextBlock VerticalAlignment="Center" Text="{Binding Path=DisplayName}" Margin="10 0"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-
-                <!--Separator-->
-                <TextBlock Grid.Row="3"
-                           Grid.Column="0"
-                           Margin="{DynamicResource ModPlusDefaultMargin}"
-                           Text="{Binding Source={StaticResource Lang}, XPath=h8}"/>
-                <ComboBox Grid.Row="3"
-                          Grid.Column="1"
-                          ItemsSource="{Binding Path=Separators}"
-                          SelectedItem="{Binding Path=SelectedSeparator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                          ToolTip="{Binding Source={StaticResource Lang}, XPath=tt1}"/>
-
-                <!-- notification settings -->
-                <Button Grid.Row="4"
-                        Grid.Column="0"
-                        Grid.ColumnSpan="4"
-                        Style="{DynamicResource ModPlusFlatButton}"
-                        HorizontalAlignment="Stretch"
-                        Command="{Binding Path=NotificationSettingsCommand}"
-                        Margin="0">
-                    <StackPanel Orientation="Horizontal">
-                        <Viewbox Width="24" Height="24" Margin="0 0 10 0">
-                            <Canvas Width="24" Height="24">
-                                <Path Data="M21,19V20H3V19L5,17V11C5,7.9 7.03,5.17 10,4.29C10,4.19 10,4.1 10,4A2,2 0 0,1 12,2A2,2 0 0,1 14,4C14,4.1 14,4.19 14,4.29C16.97,5.17 19,7.9 19,11V17L21,19M14,21A2,2 0 0,1 12,23A2,2 0 0,1 10,21" 
-                                      Fill="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Button}, Path=Foreground}" />
-                            </Canvas>
-                        </Viewbox>
-                        <TextBlock Text="{Binding Source={StaticResource LangApi}, XPath=h55}"
-                                   VerticalAlignment="Center"/>
-                    </StackPanel>
-                </Button>
-            </Grid>
-        </GroupBox>
-
-        <GroupBox Grid.Row="1"
-                  Visibility="{Binding Path=IsVisibleTabColorizerSettings, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <GroupBox.Header>
-                <CheckBox Content="{Binding Source={StaticResource Lang}, XPath=c1}"
-                          IsChecked="{Binding Path=ColorizeTabs, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-            </GroupBox.Header>
-            <Grid Visibility="{Binding Path=ColorizeTabs, Converter={StaticResource BooleanToVisibilityConverter}}">
-                
-                <!-- message for 2019 -->
-                <TextBlock Grid.Row="0"
-                           Margin="{DynamicResource ModPlusDefaultMargin}"
-                           TextWrapping="Wrap"
-                           Text="{Binding Source={StaticResource Lang}, XPath=c6}"
-                           MaxWidth="400"
-                           HorizontalAlignment="Left"
-                           Visibility="{Binding Path=IsEnabledColorizeTabsForRevitVersion, Converter={StaticResource FalseToVisibleConverter}}"/>
-
-                <Grid Visibility="{Binding Path=IsEnabledColorizeTabsForRevitVersion, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <TabItem Header="{Binding Source={StaticResource Lang}, XPath=h2}">
+            <GroupBox Header="{Binding Source={StaticResource Lang}, XPath=h2}"
+                      MinWidth="400">
+                <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -171,303 +50,626 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-                    <!-- description -->
+                    <!--Language-->
+                    <TextBlock Grid.Row="0"
+                               Margin="{DynamicResource ModPlusDefaultMargin}"
+                               Grid.Column="0" Text="{Binding Source={StaticResource Lang}, XPath=h5}"/>
+                    <ComboBox Grid.Row="0"
+                              Grid.Column="1" 
+                              Margin="{DynamicResource ModPlusDefaultMargin}"
+                              ItemsSource="{Binding Path=Languages}"
+                              SelectedItem="{Binding Path=SelectedLanguage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=DisplayName}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <Image Grid.Column="2"
+                           Grid.Row="0"
+                           Height="24"
+                           Stretch="UniformToFill"
+                           HorizontalAlignment="Left"
+                           Source="{Binding Path=LanguageImage}"
+                           Margin="{DynamicResource ModPlusDefaultMargin}"
+                           Name="LanguageImage" UseLayoutRounding="False"
+                           RenderOptions.BitmapScalingMode="HighQuality"/>
+
+                    <TextBlock Grid.Row="1"
+                               Grid.Column="0"
+                               Grid.ColumnSpan="4"
+                               Visibility="{Binding Path=MessageAboutLanguageVisibility}"
+                               TextWrapping="Wrap" MaxWidth="400"
+                               HorizontalAlignment="Center" TextAlignment="Center"
+                               Text="{Binding Source={StaticResource Lang}, XPath=h14}"
+                               Name="TbMessageAboutLanguage"
+                               FontWeight="SemiBold" Foreground="{DynamicResource ErrorBrush}"/>
+
+                    <!--Theme-->
+                    <TextBlock Grid.Row="2"
+                               Grid.Column="0"
+                               Margin="{DynamicResource ModPlusDefaultMargin}"
+                               Text="{Binding Source={StaticResource Lang}, XPath=h6}"></TextBlock>
+                    <ComboBox Grid.Row="2"
+                              Grid.Column="1"
+                              ItemsSource="{Binding Path=Themes}"
+                              SelectedItem="{Binding Path=SelectedTheme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate DataType="mps:Theme">
+                                <StackPanel Orientation="Horizontal">
+                                    <Border CornerRadius="4" Width="40" Height="30"
+                                            Background="{Binding Path=ShowCaseBackgroundBrush}">
+                                        <Ellipse HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                 Width="20" Height="20"
+                                                 Fill="{Binding Path=ShowcaseBrush}"></Ellipse>
+                                    </Border>
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding Path=DisplayName}" Margin="10 0"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <!--Separator-->
+                    <TextBlock Grid.Row="3"
+                               Grid.Column="0"
+                               Margin="{DynamicResource ModPlusDefaultMargin}"
+                               Text="{Binding Source={StaticResource Lang}, XPath=h8}"/>
+                    <ComboBox Grid.Row="3"
+                              Grid.Column="1"
+                              ItemsSource="{Binding Path=Separators}"
+                              SelectedItem="{Binding Path=SelectedSeparator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              ToolTip="{Binding Source={StaticResource Lang}, XPath=tt1}"/>
+
+                    <!-- notification settings -->
+                    <Button Grid.Row="4"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="4"
+                            Style="{DynamicResource ModPlusFlatButton}"
+                            HorizontalAlignment="Stretch"
+                            Command="{Binding Path=NotificationSettingsCommand}"
+                            Margin="0">
+                        <StackPanel Orientation="Horizontal">
+                            <Viewbox Width="24" Height="24" Margin="0 0 10 0">
+                                <Canvas Width="24" Height="24">
+                                    <Path Data="M21,19V20H3V19L5,17V11C5,7.9 7.03,5.17 10,4.29C10,4.19 10,4.1 10,4A2,2 0 0,1 12,2A2,2 0 0,1 14,4C14,4.1 14,4.19 14,4.29C16.97,5.17 19,7.9 19,11V17L21,19M14,21A2,2 0 0,1 12,23A2,2 0 0,1 10,21" 
+                                          Fill="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Button}, Path=Foreground}" />
+                                </Canvas>
+                            </Viewbox>
+                            <TextBlock Text="{Binding Source={StaticResource LangApi}, XPath=h55}"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </GroupBox>
+        </TabItem>
+
+        <!-- tab colorizer -->
+        <TabItem Header="{Binding Source={StaticResource Lang}, XPath=c1}"
+                 DataContext="{Binding Path=TabColorizerSettingsContext}">
+            <GroupBox Visibility="{Binding Path=IsVisibleTabColorizerSettings, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <GroupBox.Header>
+                    <CheckBox Content="{Binding Source={StaticResource Lang}, XPath=c1}"
+                              IsChecked="{Binding Path=ColorizeTabs, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                </GroupBox.Header>
+                <Grid IsEnabled="{Binding Path=ColorizeTabs}">
+
+                    <!-- message for 2019 -->
                     <TextBlock Grid.Row="0"
                                Margin="{DynamicResource ModPlusDefaultMargin}"
                                TextWrapping="Wrap"
-                               Text="{Binding Source={StaticResource Lang}, XPath=c5}"
+                               Text="{Binding Source={StaticResource Lang}, XPath=c6}"
                                MaxWidth="400"
-                               HorizontalAlignment="Left"/>
+                               HorizontalAlignment="Left"
+                               Visibility="{Binding Path=IsEnabledColorizeTabsForRevitVersion, Converter={StaticResource FalseToVisibleConverter}}"/>
 
-                    <!-- color scheme -->
-                    <Grid Grid.Row="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
+                    <Grid Visibility="{Binding Path=IsEnabledColorizeTabsForRevitVersion, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Column="0"
-                               Margin="{DynamicResource ModPlusDefaultMargin}"
-                               VerticalAlignment="Center"
-                               Text="{Binding Source={StaticResource Lang}, XPath=c2}"/>
-                        <ComboBox Grid.Column="1"
-                              ItemsSource="{Binding Path=ColorizeSchemes}"
-                              SelectedItem="{Binding Path=SelectedColorizeScheme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate DataType="{x:Type models:ColorizeScheme}">
-                                    <TextBlock Text="{Binding Path=Name}"/>
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-                    </Grid>
+                        <!-- description -->
+                        <TextBlock Grid.Row="0"
+                                   Margin="{DynamicResource ModPlusDefaultMargin}"
+                                   TextWrapping="Wrap"
+                                   Text="{Binding Source={StaticResource Lang}, XPath=c5}"
+                                   MaxWidth="400"
+                                   HorizontalAlignment="Left"/>
 
-                    <!-- colors preview -->
-                    <Border Grid.Row="2"
-                        BorderThickness="1"
-                        BorderBrush="{DynamicResource BoxesBorderBrush}"
-                        Background="White"
-                        Margin="{DynamicResource ModPlusDefaultMargin}">
-                        <ItemsControl Background="White"
-                                  ItemsSource="{Binding Path=SelectedColorizeScheme.Brushes}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal"/>
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate DataType="{x:Type Brush}">
-                                    <Border BorderThickness="1"
-                                        BorderBrush="{DynamicResource DarkGrayBrush}"
-                                        Background="{Binding}"
-                                        Margin="{DynamicResource ModPlusDefaultMargin}"
-                                        Width="20"
-                                        Height="20"/>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </Border>
+                        <!-- color scheme -->
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
 
-                    <!-- colorize zone and border thickness -->
-                    <Grid Grid.Row="3">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0"
+                                       Margin="{DynamicResource ModPlusDefaultMargin}"
+                                       VerticalAlignment="Center"
+                                       Text="{Binding Source={StaticResource Lang}, XPath=c2}"/>
+                            <ComboBox Grid.Column="1"
+                                      ItemsSource="{Binding Path=ColorizeSchemes}"
+                                      SelectedItem="{Binding Path=SelectedColorizeScheme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type models:ColorizeScheme}">
+                                        <TextBlock Text="{Binding Path=Name}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
 
-                        <TextBlock Grid.Column="0"
-                               Margin="{DynamicResource ModPlusDefaultMargin}"
-                               VerticalAlignment="Center"
-                               Text="{Binding Source={StaticResource Lang}, XPath=c3}"/>
-                        <ComboBox Grid.Column="1"
-                              SelectedIndex="{Binding Path=ColorizeTabsZone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnumToIntConverter}, ConverterParameter={x:Type enums:TabColorizeZone}}">
-                            <!-- Background -->
-                            <ComboBoxItem Content="{Binding Source={StaticResource Lang}, XPath=cz1}"/>
-                            <!-- Left border -->
-                            <ComboBoxItem Content="{Binding Source={StaticResource Lang}, XPath=cz2}"/>
-                            <!-- Bottom border -->
-                            <ComboBoxItem Content="{Binding Source={StaticResource Lang}, XPath=cz3}"/>
-                            <!-- Top border -->
-                            <ComboBoxItem Content="{Binding Source={StaticResource Lang}, XPath=cz4}"/>
-                        </ComboBox>
+                            <!-- add new -->
+                            <Button Grid.Column="2"
+                                    Style="{DynamicResource ModPlusFlatButtonForIcon}"
+                                    Command="{Binding Path=AddNewColorizeSchemeCommand}">
+                                <Viewbox Width="24" Height="24">
+                                    <Canvas Width="24" Height="24">
+                                        <Path Fill="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Button}, Path=Foreground}"
+                                              Data="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" />
+                                    </Canvas>
+                                </Viewbox>
+                            </Button>
 
-                        <TextBlock Grid.Column="2"
-                               Margin="{DynamicResource ModPlusDefaultMargin}"
-                               VerticalAlignment="Center"
-                               Text="{Binding Source={StaticResource Lang}, XPath=c4}"/>
-                        <AdornerDecorator Grid.Column="3"
-                                      IsEnabled="{Binding Path=IsEnabledColorizeTabsBorderThickness}">
-                            <mps:NumericBox Value="{Binding Path=ColorizeTabsBorderThickness}"
-                                        Minimum="1"
-                                        Maximum="10"/>
-                        </AdornerDecorator>
-                    </Grid>
+                            <!-- remove selected -->
+                            <Button Grid.Column="3"
+                                    Style="{DynamicResource ModPlusFlatButtonForIcon}"
+                                    Command="{Binding Path=RemoveSelectedColorizeSchemeCommand}"
+                                    IsEnabled="{Binding Path=SelectedColorizeScheme.IsEnabledToModify}">
+                                <Viewbox Width="24" Height="24">
+                                    <Canvas Width="24" Height="24">
+                                        <Path Fill="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Button}, Path=Foreground}"
+                                              Data="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" />
+                                    </Canvas>
+                                </Viewbox>
+                            </Button>
+                        </Grid>
 
-                    <!-- preview -->
-                    <Border Grid.Row="4"
-                        Background="White"
-                        BorderThickness="1"
-                        BorderBrush="{DynamicResource BoxesBorderBrush}"
-                        Margin="{DynamicResource ModPlusDefaultMargin}">
-                        <Border Margin="{DynamicResource ModPlusDefaultMargin}"
-                            Background="#CCCCCC">
-                            <StackPanel Orientation="Horizontal"
-                                    Margin="0 2 0 0"
-                                    HorizontalAlignment="Center">
-                                <Grid Height="20"
-                                  Width="120"
-                                  Background="{Binding Path=ColorizePreviewFirstTabBackground}">
-                                    <Border BorderThickness="{Binding Path=ColorizePreviewBorderThickness}"
-                                        BorderBrush="{Binding Path=ColorizePreviewFirstBorderBrush}"/>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Image Height="16"
-                                           Width="16"
-                                           Stretch="UniformToFill"
-                                           Source="../Resources/PlanIcon.png"
-                                           Margin="5 0 0 0"
-                                           RenderOptions.EdgeMode="Unspecified"
-                                           RenderOptions.BitmapScalingMode="NearestNeighbor"/>
-                                        <TextBlock Text="Tab 1"
-                                               FontWeight="SemiBold"
-                                               Foreground="Black"
-                                               VerticalAlignment="Center"
-                                               Margin="5 0 0 0"/>
-                                    </StackPanel>
-                                </Grid>
-                                <Grid Height="20"
-                                  Width="120"
-                                  Background="{Binding Path=ColorizePreviewSecondTabBackground}">
-                                    <Border BorderThickness="{Binding Path=ColorizePreviewBorderThickness}"
-                                        BorderBrush="{Binding Path=ColorizePreviewSecondBorderBrush}"/>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Image Height="16"
-                                           Width="16"
-                                           Stretch="UniformToFill"
-                                           Source="../Resources/PlanIcon.png"
-                                           Margin="5 0 0 0"
-                                           Opacity="0.5"
-                                           RenderOptions.EdgeMode="Unspecified"
-                                           RenderOptions.BitmapScalingMode="NearestNeighbor"/>
-                                        <TextBlock Text="Tab 2"
-                                               FontWeight="SemiBold"
-                                               Foreground="Black"
-                                               VerticalAlignment="Center"
-                                               Margin="5 0 0 0"/>
-                                    </StackPanel>
-                                </Grid>
-                                <Grid Height="20"
-                                  Width="120"
-                                  Background="{Binding Path=ColorizePreviewThirdTabBackground}">
-                                    <Border BorderThickness="{Binding Path=ColorizePreviewBorderThickness}"
-                                        BorderBrush="{Binding Path=ColorizePreviewThirdBorderBrush}"/>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Image Height="16"
-                                           Width="16"
-                                           Stretch="UniformToFill"
-                                           Source="../Resources/PlanIcon.png"
-                                           Margin="5 0 0 0"
-                                           Opacity="0.5"
-                                           RenderOptions.EdgeMode="Unspecified"
-                                           RenderOptions.BitmapScalingMode="NearestNeighbor"/>
-                                        <TextBlock Text="Tab 3"
-                                               FontWeight="SemiBold"
-                                               Foreground="Black"
-                                               VerticalAlignment="Center"
-                                               Margin="5 0 0 0"/>
-                                    </StackPanel>
-                                </Grid>
-                            </StackPanel>
+                        <!-- by doc title mask -->
+                        <CheckBox Grid.Row="2"
+                                  Content="{Binding Source={StaticResource Lang}, XPath=c9}"
+                                  IsChecked="{Binding Path=ColorizeByMask, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        <!-- colors preview and edit -->
+                        <Grid Grid.Row="3">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Border Grid.Column="0"
+                                    BorderThickness="1"
+                                    BorderBrush="{DynamicResource BoxesBorderBrush}"
+                                    Background="White"
+                                    Margin="{DynamicResource ModPlusDefaultMargin}"
+                                    Visibility="{Binding Path=ColorizeByMask, Converter={StaticResource FalseToVisibleConverter}}">
+                                <ItemsControl ItemsSource="{Binding Path=SelectedColorizeScheme.ColorRules}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Horizontal"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type models:ColorRule}">
+                                            <controls:ColorPicker ShowRecentColors="True"
+                                                                  Margin="{StaticResource ModPlusDefaultMargin}"
+                                                                  ColorMode="ColorCanvas"
+                                                                  ShowAdvancedButton="True"
+                                                                  ShowDropDownButton="False"
+                                                                  Width="24"
+                                                                  Height="24"
+                                                                  Padding="0"
+                                                                  SelectedColor="{Binding Path=Color, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                                  IsEnabled="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=ItemsControl}, Path=DataContext.SelectedColorizeScheme.IsEnabledToModify}"
+                                                                  Tag="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=ItemsControl}}">
+                                                <controls:ColorPicker.ContextMenu>
+                                                    <ContextMenu>
+                                                        <MenuItem Header="{Binding Source={StaticResource Lang}, XPath=remove}"
+                                                                  Command="{Binding Path=PlacementTarget.Tag.DataContext.RemoveColorRuleCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}"
+                                                                  CommandParameter="{Binding Path=PlacementTarget.DataContext, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}"/>
+                                                    </ContextMenu>
+                                                </controls:ColorPicker.ContextMenu>
+                                            </controls:ColorPicker>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Border>
+
+                            <Border Grid.Column="0"
+                                    BorderThickness="1"
+                                    BorderBrush="{DynamicResource BoxesBorderBrush}"
+                                    Background="White"
+                                    Margin="{DynamicResource ModPlusDefaultMargin}"
+                                    Visibility="{Binding Path=ColorizeByMask, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <ScrollViewer MaxHeight="208"
+                                              HorizontalScrollBarVisibility="Disabled"
+                                              VerticalScrollBarVisibility="Auto">
+                                    <ItemsControl ItemsSource="{Binding Path=SelectedColorizeScheme.ColorRules}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate DataType="{x:Type models:ColorRule}">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <controls:ColorPicker Grid.Column="0"
+                                                                          ShowRecentColors="True"
+                                                                          Margin="{StaticResource ModPlusDefaultMargin}"
+                                                                          ColorMode="ColorCanvas"
+                                                                          ShowAdvancedButton="True"
+                                                                          ShowDropDownButton="False"
+                                                                          Width="24"
+                                                                          Height="24"
+                                                                          Padding="0"
+                                                                          SelectedColor="{Binding Path=Color, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                                          IsEnabled="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=ItemsControl}, Path=DataContext.SelectedColorizeScheme.IsEnabledToModify}"/>
+
+                                                    <TextBox Grid.Column="1"
+                                                             Text="{Binding Path=DocumentNameMask, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                             mps:HintAssist.Hint="{Binding Source={StaticResource Lang}, XPath=c10}"
+                                                             mps:TextFieldAssist.ClearTextButton="True"/>
+
+                                                    <Button Grid.Column="2"
+                                                            Style="{DynamicResource ModPlusFlatButtonForIcon}"
+                                                            Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=ItemsControl}, Path=DataContext.RemoveColorRuleCommand}"
+                                                            CommandParameter="{Binding}"
+                                                            IsEnabled="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=ItemsControl}, Path=DataContext.SelectedColorizeScheme.IsEnabledToModify}"
+                                                            VerticalAlignment="Center">
+                                                        <Viewbox Width="24" Height="24">
+                                                            <Canvas Width="24" Height="24">
+                                                                <Path Fill="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Button}, Path=Foreground}"
+                                                                  Data="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
+                                                            </Canvas>
+                                                        </Viewbox>
+                                                    </Button>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </ScrollViewer>
+                            </Border>
+
+                            <!-- add new color -->
+                            <Button Grid.Column="1"
+                                    Style="{DynamicResource ModPlusFlatButtonForIcon}"
+                                    Command="{Binding Path=AddNewColorCommand}"
+                                    IsEnabled="{Binding Path=SelectedColorizeScheme.IsEnabledToModify}"
+                                    VerticalAlignment="Center">
+                                <Viewbox Width="24" Height="24">
+                                    <Canvas Width="24" Height="24">
+                                        <Path Fill="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Button}, Path=Foreground}"
+                                              Data="F1 M 16.560,11.940 L 7.620,3.000 L 6.210,4.410 L 8.590,6.790 L 3.440,11.940 C 2.850,12.500 2.850,13.470 3.440,14.060 L 8.940,19.560 C 9.230,19.850 9.620,20.000 10.000,20.000 C 10.380,20.000 10.770,19.850 11.060,19.560 L 16.560,14.060 C 17.150,13.470 17.150,12.500 16.560,11.940 Z M 5.210,13.000 L 10.000,8.210 L 14.790,13.000 M 19.000,14.500 C 19.000,14.500 17.000,16.670 17.000,18.000 C 17.000,19.105 17.895,20.000 19.000,20.000 C 20.105,20.000 21.000,19.105 21.000,18.000 C 21.000,16.670 19.000,14.500 19.000,14.500" />
+                                    </Canvas>
+                                </Viewbox>
+                            </Button>
+                        </Grid>
+
+                        <!-- colorize zone and border thickness -->
+                        <Grid Grid.Row="4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0"
+                                       Margin="{DynamicResource ModPlusDefaultMargin}"
+                                       VerticalAlignment="Center"
+                                       Text="{Binding Source={StaticResource Lang}, XPath=c3}"/>
+                            <ComboBox Grid.Column="1"
+                                      SelectedIndex="{Binding Path=ColorizeTabsZone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnumToIntConverter}, ConverterParameter={x:Type enums:TabColorizeZone}}">
+                                <!-- Background -->
+                                <ComboBoxItem Content="{Binding Source={StaticResource Lang}, XPath=cz1}"/>
+                                <!-- Left border -->
+                                <ComboBoxItem Content="{Binding Source={StaticResource Lang}, XPath=cz2}"/>
+                                <!-- Bottom border -->
+                                <ComboBoxItem Content="{Binding Source={StaticResource Lang}, XPath=cz3}"/>
+                                <!-- Top border -->
+                                <ComboBoxItem Content="{Binding Source={StaticResource Lang}, XPath=cz4}"/>
+                            </ComboBox>
+
+                            <TextBlock Grid.Column="2"
+                                       Margin="{DynamicResource ModPlusDefaultMargin}"
+                                       VerticalAlignment="Center"
+                                       Text="{Binding Source={StaticResource Lang}, XPath=c4}"/>
+                            <AdornerDecorator Grid.Column="3"
+                                              IsEnabled="{Binding Path=IsEnabledColorizeTabsBorderThickness}">
+                                <mps:NumericBox Value="{Binding Path=ColorizeTabsBorderThickness}"
+                                                Minimum="1"
+                                                Maximum="10"/>
+                            </AdornerDecorator>
+                        </Grid>
+
+                        <!-- border settings -->
+                        <Grid Grid.Row="5"
+                              IsEnabled="{Binding Path=IsEnabledColorizeTabsBorderThickness, Converter={StaticResource BooleanInverseConverter}}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- active border -->
+                            <TextBlock Grid.Row="0"
+                                       Grid.Column="0"
+                                       Text="{Binding Source={StaticResource Lang}, XPath=c7}"
+                                       VerticalAlignment="Center"/>
+                            <AdornerDecorator Grid.Row="0"
+                                              Grid.Column="1">
+                                <mps:NumericBox Minimum="0"
+                                                Maximum="5"
+                                                Value="{Binding Path=ActiveBorderThickness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            </AdornerDecorator>
+                            <controls:ColorPicker Grid.Row="0"
+                                                  Grid.Column="2"
+                                                  ShowRecentColors="True"
+                                                  Margin="{StaticResource ModPlusDefaultMargin}"
+                                                  ColorMode="ColorCanvas"
+                                                  ShowAdvancedButton="True"
+                                                  ShowDropDownButton="False"
+                                                  Width="24"
+                                                  Height="24"
+                                                  Padding="0"
+                                                  SelectedColor="{Binding Path=ActiveBorderColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <!-- inactive border -->
+                            <TextBlock Grid.Row="1"
+                                       Grid.Column="0"
+                                       Text="{Binding Source={StaticResource Lang}, XPath=c8}"
+                                       VerticalAlignment="Center"/>
+                            <AdornerDecorator Grid.Row="1"
+                                              Grid.Column="1">
+                                <mps:NumericBox Minimum="0"
+                                                Maximum="5"
+                                                Value="{Binding Path=InactiveBorderThickness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            </AdornerDecorator>
+                            <controls:ColorPicker Grid.Row="1"
+                                                  Grid.Column="2"
+                                                  ShowRecentColors="True"
+                                                  Margin="{StaticResource ModPlusDefaultMargin}"
+                                                  ColorMode="ColorCanvas"
+                                                  ShowAdvancedButton="True"
+                                                  ShowDropDownButton="False"
+                                                  Width="24"
+                                                  Height="24"
+                                                  Padding="0"
+                                                  SelectedColor="{Binding Path=InactiveBorderColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Grid>
+
+                        <!-- preview -->
+                        <Border Grid.Row="6"
+                                Background="White"
+                                BorderThickness="1"
+                                BorderBrush="{DynamicResource BoxesBorderBrush}"
+                                Margin="{DynamicResource ModPlusDefaultMargin}">
+                            <Border Margin="8"
+                                    Background="#CCCCCC">
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0 2 0 0"
+                                            HorizontalAlignment="Center">
+                                    <Grid Height="20"
+                                          Width="120"
+                                          Background="{Binding Path=ColorizePreviewFirstTabBackground}">
+                                        <Border BorderThickness="{Binding Path=ColorizePreviewActiveBorderThickness}"
+                                                BorderBrush="{Binding Path=ColorizePreviewFirstBorderBrush}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Height="16"
+                                                   Width="16"
+                                                   Stretch="UniformToFill"
+                                                   Source="../Resources/PlanIcon.png"
+                                                   Margin="5 0 0 0"
+                                                   RenderOptions.EdgeMode="Unspecified"
+                                                   RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                                            <TextBlock Text="Tab 1"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="Black"
+                                                       VerticalAlignment="Center"
+                                                       Margin="5 0 0 0"/>
+                                        </StackPanel>
+                                    </Grid>
+                                    <Grid Height="20"
+                                          Width="120"
+                                          Background="{Binding Path=ColorizePreviewSecondTabBackground}">
+                                        <Border BorderThickness="{Binding Path=ColorizePreviewInactiveBorderThickness}"
+                                                BorderBrush="{Binding Path=ColorizePreviewSecondBorderBrush}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Height="16"
+                                                   Width="16"
+                                                   Stretch="UniformToFill"
+                                                   Source="../Resources/PlanIcon.png"
+                                                   Margin="5 0 0 0"
+                                                   Opacity="0.5"
+                                                   RenderOptions.EdgeMode="Unspecified"
+                                                   RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                                            <TextBlock Text="Tab 2"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="Black"
+                                                       VerticalAlignment="Center"
+                                                       Margin="5 0 0 0"/>
+                                        </StackPanel>
+                                    </Grid>
+                                    <Grid Height="20"
+                                          Width="120"
+                                          Background="{Binding Path=ColorizePreviewThirdTabBackground}">
+                                        <Border BorderThickness="{Binding Path=ColorizePreviewInactiveBorderThickness}"
+                                                BorderBrush="{Binding Path=ColorizePreviewThirdBorderBrush}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Height="16"
+                                                   Width="16"
+                                                   Stretch="UniformToFill"
+                                                   Source="../Resources/PlanIcon.png"
+                                                   Margin="5 0 0 0"
+                                                   Opacity="0.5"
+                                                   RenderOptions.EdgeMode="Unspecified"
+                                                   RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                                            <TextBlock Text="Tab 3"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="Black"
+                                                       VerticalAlignment="Center"
+                                                       Margin="5 0 0 0"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
                         </Border>
-                    </Border>
+                    </Grid>
                 </Grid>
-            </Grid>
-        </GroupBox>
+            </GroupBox>
+        </TabItem>
 
-        <!-- Local license server -->
-        <GroupBox Grid.Row="2">
-            <GroupBox.Header>
-                <CheckBox Content="{Binding Source={StaticResource LangApi}, XPath=h16}"
-                          IsChecked="{Binding Path=IsLocalLicenseServerEnable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-            </GroupBox.Header>
-            <Grid Visibility="{Binding Path=IsLocalLicenseServerEnable, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
+        <!-- license server -->
+        <TabItem Header="{Binding Source={StaticResource Lang}, XPath=h3}">
+            <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <!-- Ip address -->
-                <TextBlock Text="{Binding Source={StaticResource LangApi}, XPath=h17}"
+                <!-- Local license server -->
+                <GroupBox Grid.Row="0">
+                    <GroupBox.Header>
+                        <CheckBox Content="{Binding Source={StaticResource LangApi}, XPath=h16}"
+                                  IsChecked="{Binding Path=IsLocalLicenseServerEnable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    </GroupBox.Header>
+                    <Grid Visibility="{Binding Path=IsLocalLicenseServerEnable, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Ip address -->
+                        <TextBlock Text="{Binding Source={StaticResource LangApi}, XPath=h17}"
                            Grid.Row="0" Grid.Column="0"/>
-                <AdornerDecorator Grid.Row="0" Grid.Column="1">
-                    <TextBox MinWidth="100" mps:TextFieldAssist.SelectAllOnFocus="True"
+                        <AdornerDecorator Grid.Row="0" Grid.Column="1">
+                            <TextBox MinWidth="100" mps:TextFieldAssist.SelectAllOnFocus="True"
                              Text="{Binding Path=LocalLicenseServerIpAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              IsEnabled="{Binding Path=CanStopLocalLicenseServerConnection, Converter={StaticResource BooleanInverseConverter}}"
                              mps:TextFieldAssist.ClearTextButton="True"/>
-                </AdornerDecorator>
+                        </AdornerDecorator>
 
-                <!-- port -->
-                <TextBlock Text="{Binding Source={StaticResource LangApi}, XPath=h18}"
+                        <!-- port -->
+                        <TextBlock Text="{Binding Source={StaticResource LangApi}, XPath=h18}"
                            Grid.Row="0" Grid.Column="2"/>
-                <AdornerDecorator Grid.Row="0" Grid.Column="3">
-                    <mps:NumericBox 
+                        <AdornerDecorator Grid.Row="0" Grid.Column="3">
+                            <mps:NumericBox 
                                 MinWidth="50" Name="TbLocalLicenseServerPort"
                                 Value="{Binding Path=LocalLicenseServerPort, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                 IsEnabled="{Binding Path=CanStopLocalLicenseServerConnection, Converter={StaticResource BooleanInverseConverter}}"
                                 NumericInputMode="Numbers"
                                 HideUpDownButtons="True" Minimum="0" Maximum="65535"/>
-                </AdornerDecorator>
+                        </AdornerDecorator>
 
-                <!-- check connection -->
-                <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="5"
+                        <!-- check connection -->
+                        <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="5"
                         HorizontalAlignment="Stretch" 
                         Command="{Binding Path=CheckLocalLicenseServerConnectionCommand}"
                         Content="{Binding Source={StaticResource LangApi}, XPath=h19}"/>
 
-                <!-- stop connection -->
-                <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="5"
+                        <!-- stop connection -->
+                        <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="5"
                         Command="{Binding Path=StopLocalLicenseServerCommand}"
                         HorizontalAlignment="Stretch"
                         Content="{Binding Source={StaticResource LangApi}, XPath=h23}"/>
 
-                <!-- start connection -->
-                <Button Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="5"
+                        <!-- start connection -->
+                        <Button Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="5"
                         Command="{Binding Path=RestoreLocalLicenseServerCommand}"
                         HorizontalAlignment="Stretch"
                         Content="{Binding Source={StaticResource LangApi}, XPath=h24}"/>
-            </Grid>
-        </GroupBox>
+                    </Grid>
+                </GroupBox>
 
-        <!-- Web license server -->
-        <GroupBox Grid.Row="3">
-            <GroupBox.Header>
-                <CheckBox Content="{Binding Source={StaticResource LangApi}, XPath=h36}"
+                <!-- Web license server -->
+                <GroupBox Grid.Row="1">
+                    <GroupBox.Header>
+                        <CheckBox Content="{Binding Source={StaticResource LangApi}, XPath=h36}"
                           IsChecked="{Binding Path=IsWebLicenseServerEnable}"/>
-            </GroupBox.Header>
-            <Grid Visibility="{Binding Path=IsWebLicenseServerEnable, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <TextBlock Text="{Binding Source={StaticResource LangApi}, XPath=h37}"
+                    </GroupBox.Header>
+                    <Grid Visibility="{Binding Path=IsWebLicenseServerEnable, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="{Binding Source={StaticResource LangApi}, XPath=h37}"
                            Grid.Row="0" Grid.Column="0"/>
-                <TextBox Grid.Row="0" Grid.Column="1" MaxLength="36"
+                        <TextBox Grid.Row="0" Grid.Column="1" MaxLength="36"
                          Text="{Binding Path=WebLicenseServerGuid, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                          mps:TextFieldAssist.SelectAllOnFocus="True"
                          mps:TextFieldAssist.ClearTextButton="True"/>
-                <TextBlock Text="{Binding Source={StaticResource LangApi}, XPath=h38}"
+                        <TextBlock Text="{Binding Source={StaticResource LangApi}, XPath=h38}"
                            Grid.Row="1" Grid.Column="0"/>
-                <TextBox Grid.Row="1" Grid.Column="1"
+                        <TextBox Grid.Row="1" Grid.Column="1"
                          Text="{Binding Path=WebLicenseServerUserEmail, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                          mps:TextFieldAssist.ClearTextButton="True"/>
 
-                <!-- check connection -->
-                <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                        <!-- check connection -->
+                        <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
                         HorizontalAlignment="Stretch" 
                         Command="{Binding Path=CheckWebLicenseServerConnectionCommand}"
                         Content="{Binding Source={StaticResource LangApi}, XPath=h19}"/>
 
-                <!-- check user access -->
-                <Button Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
+                        <!-- check user access -->
+                        <Button Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
                         HorizontalAlignment="Stretch"
                         Command="{Binding Path=CheckIsUserAllowForWebLicenseServerCommand}"
                         Content="{Binding Source={StaticResource LangApi}, XPath=h40}"/>
 
-                <!-- stop connection -->
-                <Button Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
+                        <!-- stop connection -->
+                        <Button Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
                         Command="{Binding Path=StopWebLicenseServerNotificationsCommand}"
                         HorizontalAlignment="Stretch"
                         Content="{Binding Source={StaticResource LangApi}, XPath=h23}"/>
 
-                <!-- start connection -->
-                <Button Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2"
+                        <!-- start connection -->
+                        <Button Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2"
                         Command="{Binding Path=RestoreWebLicenseServerNotificationsCommand}"
                         HorizontalAlignment="Stretch"
                         Content="{Binding Source={StaticResource LangApi}, XPath=h24}"/>
-            </Grid>
-        </GroupBox>
+                    </Grid>
+                </GroupBox>
 
-        <!-- DisableConnectionWithLicenseServerInAutoCAD -->
-        <CheckBox 
-            Grid.Row="4" Content="{Binding Source={StaticResource LangApi}, XPath=h25}"
-            IsChecked="{Binding Path=DisableConnectionWithLicenseServerInRevit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-    </Grid>
+                <!-- DisableConnectionWithLicenseServerInAutoCAD -->
+                <CheckBox Grid.Row="2" Content="{Binding Source={StaticResource LangApi}, XPath=h25}"
+                  IsChecked="{Binding Path=DisableConnectionWithLicenseServerInRevit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
+        </TabItem>
+    </TabControl>
 </mps:ModPlusWindow>

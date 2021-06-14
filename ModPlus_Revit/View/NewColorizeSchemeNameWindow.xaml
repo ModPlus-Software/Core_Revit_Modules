@@ -1,0 +1,77 @@
+﻿<mps:ModPlusWindow x:Class="ModPlus_Revit.View.NewColorizeSchemeNameWindow"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   xmlns:mps="https://modplus.org/winfx/xaml/controls"
+                   mc:Ignorable="d"
+                   ResizeMode="NoResize" 
+                   SizeToContent="WidthAndHeight"
+                   ShowCloseButton="False" 
+                   ShowInTaskbar="True"
+                   ShowTitleBar="False"
+                   Topmost="True"
+                   WindowStartupLocation="CenterOwner">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/ModPlusStyle;component/Styles/Controls.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <XmlDataProvider x:Key="Lang" Source="E:/ModPlus/Languages/en-US.xml" XPath="ModPlus/RevitDlls"/>
+            <XmlDataProvider x:Key="LangApi" Source="E:/ModPlus/Languages/en-US.xml" XPath="ModPlus/ModPlusAPI"/>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Enter a unique name for the new coloring scheme -->
+        <TextBlock Grid.Row="0"
+                   Grid.Column="0"
+                   Grid.ColumnSpan="2"
+                   Margin="{StaticResource ModPlusDefaultMargin}"
+                   Text="{Binding Source={StaticResource Lang}, XPath=c12}"/>
+
+        <TextBox Grid.Row="1"
+                 Grid.Column="0"
+                 Grid.ColumnSpan="2"
+                 Width="300"
+                 Name="TbName"
+                 TextChanged="TbName_OnTextChanged"
+                 PreviewTextInput="TbName_OnPreviewTextInput"/>
+
+        <TextBlock Grid.Row="2"
+                   Grid.Column="0"
+                   Grid.ColumnSpan="2"
+                   Name="TbError"
+                   TextWrapping="Wrap"
+                   Visibility="Collapsed"
+                   Margin="{StaticResource ModPlusDefaultMargin}"
+                   Foreground="{StaticResource ErrorBrush}"/>
+
+        <Button Grid.Column="0"
+                Grid.Row="3"
+                Name="BtAccept"
+                Click="BtAccept_OnClick"
+                Content="{Binding Source={StaticResource LangApi}, XPath=accept}"
+                HorizontalAlignment="Center"
+                IsEnabled="False"
+                IsDefault="True"/>
+
+        <Button Grid.Column="1"
+                Grid.Row="3"
+                Name="BtCancel"
+                Click="BtCancel_OnClick"
+                Content="{Binding Source={StaticResource LangApi}, XPath=cancel}"
+                HorizontalAlignment="Center"
+                IsCancel="True"/>
+    </Grid>
+</mps:ModPlusWindow>

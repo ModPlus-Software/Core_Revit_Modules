@@ -2,10 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.IO;
     using System.Linq;
-    using System.Reflection;
     using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Input;
@@ -25,7 +23,7 @@
     /// <summary>
     /// Модель представления окна настроек
     /// </summary>
-    public class SettingsViewModel : VmBase
+    public class SettingsViewModel : ObservableObject
     {
         private const string LangApi = "ModPlusAPI";
         private readonly SettingsWindow _parentWindow;
@@ -37,10 +35,7 @@
 
         private bool _canStopLocalLicenseServerConnection;
         private bool _canStopWebLicenseServerNotification;
-
-        private ColorizeScheme _selectedColorizeScheme;
-        private List<ColorizeScheme> _colorizeSchemes;
-
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="SettingsViewModel"/> class.
         /// </summary>
@@ -48,6 +43,7 @@
         public SettingsViewModel(SettingsWindow parentWindow)
         {
             _parentWindow = parentWindow;
+            TabColorizerSettingsContext = new TabColorizerSettingsContext(parentWindow);
             FillData();
         }
 
@@ -144,6 +140,11 @@
                 ExceptionBox.Show(exception);
             }
         });
+        
+        /// <summary>
+        /// Контекст настройки раскраски вкладок
+        /// </summary>
+        public TabColorizerSettingsContext TabColorizerSettingsContext { get; }
 
         #region LAN License Server
 
@@ -397,289 +398,13 @@
 
         #endregion
 
-        #region Tab colorizer
-
         /// <summary>
-        /// Видимость настроек раскраски вкладок
+        /// Закрытие окна
         /// </summary>
-        public bool IsVisibleTabColorizerSettings
+        public ICommand OnClosingCommand => new RelayCommandWithoutParameter(() =>
         {
-            get
-            {
-#if R2017 || R2018
-                return false;
-#else
-                return true;
-#endif
-            }
-        }
-
-        /// <summary>
-        /// Выполнять раскраску вкладок видов
-        /// </summary>
-        public bool ColorizeTabs
-        {
-#if R2017 || R2018
-            get;
-            set;
-#else
-            get => bool.TryParse(UserConfigFile.GetValue("Revit", nameof(ColorizeTabs)), out var b) && b;
-            set
-            {
-                UserConfigFile.SetValue("Revit", nameof(ColorizeTabs), value.ToString(), true);
-                OnPropertyChanged();
-            }
-#endif
-        }
-
-        /// <summary>
-        /// Доступность сервиса раскраски по версии Revit
-        /// </summary>
-        public bool IsEnabledColorizeTabsForRevitVersion
-        {
-            get
-            {
-#if R2017 || R2018
-                return false;
-#elif R2019
-                var xceedFile = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Autodesk", "Revit 2019", "Xceed.Wpf.AvalonDock.dll");
-                if (File.Exists(xceedFile) &&
-                    Version.TryParse(FileVersionInfo.GetVersionInfo(xceedFile).FileVersion, out var version))
-                {
-                    if (version.MinorRevision < 10)
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    return false;
-                }
-
-                return true;
-#else
-                return true;
-#endif
-            }
-        }
-
-        /// <summary>
-        /// Доступные цветовые схемы
-        /// </summary>
-        public List<ColorizeScheme> ColorizeSchemes
-        {
-            get
-            {
-#if R2017 || R2018
-                return new List<ColorizeScheme>();
-#else
-                return _colorizeSchemes ?? (_colorizeSchemes = ModPlus.TabColorizer.GetColorSchemes());
-#endif
-            }
-        }
-
-        /// <summary>
-        /// Выбранная цветовая схема
-        /// </summary>
-        public ColorizeScheme SelectedColorizeScheme
-        {
-#if R2017 || R2018
-            get;
-            set;
-#else
-            get => _selectedColorizeScheme;
-            set
-            {
-                if (_selectedColorizeScheme == value)
-                    return;
-                _selectedColorizeScheme = value;
-                OnPropertyChanged();
-                if (value != null)
-                    UserConfigFile.SetValue("Revit", "ColorizeTabsSchemeName", value.Name, true);
-                RaiseColorizePreviewPropertiesChanged();
-            }
-#endif
-        }
-
-        /// <summary>
-        /// Зона раскраски вкладок
-        /// </summary>
-        public TabColorizeZone ColorizeTabsZone
-        {
-#if R2017 || R2018
-            get;
-            set;
-#else
-            get => Enum.TryParse(UserConfigFile.GetValue("Revit", nameof(ColorizeTabsZone)), out TabColorizeZone zone)
-                ? zone
-                : TabColorizeZone.Background;
-            set
-            {
-                UserConfigFile.SetValue("Revit", nameof(ColorizeTabsZone), value.ToString(), true);
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(IsEnabledColorizeTabsBorderThickness));
-                RaiseColorizePreviewPropertiesChanged();
-            }
-#endif
-        }
-
-        /// <summary>
-        /// Is enabled <see cref="ColorizeTabsBorderThickness"/>
-        /// </summary>
-        public bool IsEnabledColorizeTabsBorderThickness => ColorizeTabsZone != TabColorizeZone.Background;
-
-        /// <summary>
-        /// Толщина границы для зон раскраски Border...
-        /// </summary>
-        public int ColorizeTabsBorderThickness
-        {
-#if R2017 || R2018
-            get;
-            set;
-#else
-            get => int.TryParse(UserConfigFile.GetValue("Revit", nameof(ColorizeTabsBorderThickness)), out var i)
-                ? i
-                : 4;
-            set
-            {
-                UserConfigFile.SetValue("Revit", nameof(ColorizeTabsBorderThickness), value.ToString(), true);
-                OnPropertyChanged();
-                RaiseColorizePreviewPropertiesChanged();
-            }
-#endif
-        }
-
-        /// <summary>
-        /// Задний фон первой вкладки на предварительном просмотре
-        /// </summary>
-        public Brush ColorizePreviewFirstTabBackground
-        {
-#if R2017 || R2018
-            get;
-#else
-            get
-            {
-                if (ColorizeTabsZone == TabColorizeZone.Background)
-                    return SelectedColorizeScheme.Brushes[0];
-                return Brushes.White;
-            }
-#endif
-        }
-
-        /// <summary>
-        /// Задний фон второй вкладки на предварительном просмотре
-        /// </summary>
-        public Brush ColorizePreviewSecondTabBackground
-        {
-#if R2017 || R2018
-            get;
-#else
-            get
-            {
-                if (ColorizeTabsZone == TabColorizeZone.Background)
-                    return SelectedColorizeScheme.Brushes[1];
-                return (SolidColorBrush)new ColorConverter().ConvertFrom("#cccccc");
-            }
-#endif
-        }
-
-        /// <summary>
-        /// Задний фон третьей вкладки на предварительном просмотре
-        /// </summary>
-        public Brush ColorizePreviewThirdTabBackground
-        {
-#if R2017 || R2018
-            get;
-#else
-            get
-            {
-                if (ColorizeTabsZone == TabColorizeZone.Background)
-                    return SelectedColorizeScheme.Brushes[2];
-                return (SolidColorBrush)new ColorConverter().ConvertFrom("#cccccc");
-            }
-#endif
-        }
-
-        /// <summary>
-        /// Толщина рамок вкладок на предварительном просмотре
-        /// </summary>
-        public Thickness ColorizePreviewBorderThickness
-        {
-#if R2017 || R2018
-            get;
-#else
-            get
-            {
-                switch (ColorizeTabsZone)
-                {
-                    case TabColorizeZone.BorderLeft:
-                        return new Thickness(ColorizeTabsBorderThickness, 0, 0, 0);
-                    case TabColorizeZone.BorderBottom:
-                        return new Thickness(0, 0, 0, ColorizeTabsBorderThickness);
-                    case TabColorizeZone.BorderTop:
-                        return new Thickness(0, ColorizeTabsBorderThickness, 0, 0);
-                    case TabColorizeZone.Background:
-                        return new Thickness(0);
-                    default:
-                        return new Thickness(0);
-                }
-            }
-#endif
-        }
-
-        /// <summary>
-        /// Заливка рамок первой вкладки на предварительном просмотре
-        /// </summary>
-        public Brush ColorizePreviewFirstBorderBrush
-        {
-#if R2017 || R2018
-            get;
-#else
-            get
-            {
-                if (ColorizeTabsZone == TabColorizeZone.Background)
-                    return Brushes.Transparent;
-                return SelectedColorizeScheme.Brushes[0];
-            }
-#endif
-        }
-
-        /// <summary>
-        /// Заливка рамок второй вкладки на предварительном просмотре
-        /// </summary>
-        public Brush ColorizePreviewSecondBorderBrush
-        {
-#if R2017 || R2018
-            get;
-#else
-            get
-            {
-                if (ColorizeTabsZone == TabColorizeZone.Background)
-                    return Brushes.Transparent;
-                return SelectedColorizeScheme.Brushes[1];
-            }
-#endif
-        }
-
-        /// <summary>
-        /// Заливка рамок третьей вкладки на предварительном просмотре
-        /// </summary>
-        public Brush ColorizePreviewThirdBorderBrush
-        {
-#if R2017 || R2018
-            get;
-#else
-            get
-            {
-                if (ColorizeTabsZone == TabColorizeZone.Background)
-                    return Brushes.Transparent;
-                return SelectedColorizeScheme.Brushes[2];
-            }
-#endif
-        }
-
-        #endregion
+            TabColorizerSettingsContext.SaveCustomColorSchemes();
+        });
 
         /// <summary>
         /// Отключить работу сервера лицензий в Revit
@@ -699,12 +424,6 @@
             {
                 FillAndSetLanguages();
                 FillThemesAndColors();
-
-#if !R2017 && !R2018
-                var savedColorizeSchemeName = UserConfigFile.GetValue("Revit", "ColorizeTabsSchemeName");
-                var savedColorizeScheme = ColorizeSchemes.FirstOrDefault(s => s.Name == savedColorizeSchemeName);
-                _selectedColorizeScheme = savedColorizeScheme ?? ColorizeSchemes.FirstOrDefault();
-#endif
 
                 CanStopLocalLicenseServerConnection = ClientStarter.IsClientWorking();
                 CanStopWebLicenseServerNotification =
@@ -730,17 +449,8 @@
             try
             {
 #if !R2017 && !R2018
-                if (ModPlus.TabColorizer != null)
-                {
-                    ModPlus.TabColorizer.SetState(
-                        ColorizeTabs,
-                        SelectedColorizeScheme?.Name,
-                        ColorizeTabsZone,
-                        ColorizeTabsBorderThickness);
-                    ModPlus.TabColorizer.Colorize();
-                }
+                TabColorizerSettingsContext.ApplySettings();
 #endif
-
                 if (_restartClientOnClose)
                 {
                     // reload server
@@ -803,17 +513,6 @@
             {
                 LanguageImage = null;
             }
-        }
-
-        private void RaiseColorizePreviewPropertiesChanged()
-        {
-            OnPropertyChanged(nameof(ColorizePreviewFirstTabBackground));
-            OnPropertyChanged(nameof(ColorizePreviewSecondTabBackground));
-            OnPropertyChanged(nameof(ColorizePreviewThirdTabBackground));
-            OnPropertyChanged(nameof(ColorizePreviewBorderThickness));
-            OnPropertyChanged(nameof(ColorizePreviewFirstBorderBrush));
-            OnPropertyChanged(nameof(ColorizePreviewSecondBorderBrush));
-            OnPropertyChanged(nameof(ColorizePreviewThirdBorderBrush));
         }
     }
 }

@@ -6,6 +6,7 @@
     using System.Linq;
     using System.Net;
     using System.Reflection;
+    using System.Windows.Media;
     using System.Xml.Linq;
     using Autodesk.Revit.UI;
     using Autodesk.Revit.UI.Events;
@@ -105,13 +106,18 @@
                 {
                     if (TabColorizer == null)
                     {
-                        TabColorizer = new TabColorizer(uiApp);
+                        TabColorizer = new TabColorizer(uiApp, _application);
                         var schemeName = UserConfigFile.GetValue("Revit", "ColorizeTabsSchemeName");
                         TabColorizer.SetState(
                             bool.TryParse(UserConfigFile.GetValue("Revit", "ColorizeTabs"), out var b) && b,
                             !string.IsNullOrEmpty(schemeName) ? schemeName : "Happy Like Pastels",
                             Enum.TryParse(UserConfigFile.GetValue("Revit", "ColorizeTabsZone"), out TabColorizeZone z) ? z : TabColorizeZone.Background,
-                            int.TryParse(UserConfigFile.GetValue("Revit", "ColorizeTabsBorderThickness"), out var i) ? i : 4);
+                            int.TryParse(UserConfigFile.GetValue("Revit", "ColorizeTabsBorderThickness"), out var i) ? i : 4,
+                            int.TryParse(UserConfigFile.GetValue("Revit", "ActiveBorderThickness"), out i) ? i : 0,
+                            GetColorFromSettings("ActiveBorderColor"),
+                            int.TryParse(UserConfigFile.GetValue("Revit", "InactiveBorderThickness"), out i) ? i : 0,
+                            GetColorFromSettings("InactiveBorderColor"),
+                            bool.TryParse(UserConfigFile.GetValue("Revit", "ColorizeByMask"), out b) && b);
                     }
 
                     _application.Idling -= ApplicationOnIdling;
@@ -303,6 +309,20 @@
             catch (Exception exception)
             {
                 ExceptionBox.Show(exception);
+            }
+        }
+
+        private Color GetColorFromSettings(string key)
+        {
+            try
+            {
+                if (ColorConverter.ConvertFromString(UserConfigFile.GetValue("Revit", key)) is Color color)
+                    return color;
+                return Colors.Black;
+            }
+            catch
+            {
+                return Colors.Black;
             }
         }
 
