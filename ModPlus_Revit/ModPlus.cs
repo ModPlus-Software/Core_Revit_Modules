@@ -84,29 +84,29 @@
         {
             try
             {
-#if R2019
-                var xceedFile = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Autodesk", "Revit 2019", "Xceed.Wpf.AvalonDock.dll");
-                if (File.Exists(xceedFile) &&
-                    Version.TryParse(FileVersionInfo.GetVersionInfo(xceedFile).FileVersion, out var version))
-                {
-                    if (version.MinorRevision < 10)
-                    {
-                        _application.Idling -= ApplicationOnIdling;
-                        return;
-                    }
-                }
-                else
-                {
-                    _application.Idling -= ApplicationOnIdling;
-                    return;
-                }
-#endif
                 if (sender is UIApplication uiApp)
                 {
                     if (TabColorizer == null)
                     {
                         TabColorizer = new TabColorizer(uiApp, _application);
+#if R2019
+                        var xceedFile = Path.Combine(
+                            Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Autodesk", "Revit 2019", "Xceed.Wpf.AvalonDock.dll");
+                        if (File.Exists(xceedFile) &&
+                            Version.TryParse(FileVersionInfo.GetVersionInfo(xceedFile).FileVersion, out var version))
+                        {
+                            if (version.MinorRevision < 10)
+                            {
+                                _application.Idling -= ApplicationOnIdling;
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            _application.Idling -= ApplicationOnIdling;
+                            return;
+                        }
+#endif
                         var schemeName = UserConfigFile.GetValue("Revit", "ColorizeTabsSchemeName");
                         TabColorizer.SetState(
                             bool.TryParse(UserConfigFile.GetValue("Revit", "ColorizeTabs"), out var b) && b,
