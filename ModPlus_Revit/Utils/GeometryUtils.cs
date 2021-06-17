@@ -291,6 +291,28 @@
         {
             return Math.Abs(Math.Abs(vector.DotProduct(checkedVector)) - 1.0) < tolerance;
         }
+        
+        /// <summary>
+        /// Проверка перпендикулярности двух отрезков
+        /// </summary>
+        /// <param name="line">Первый отрезок</param>
+        /// <param name="checkedLine">Второй отрезок</param>
+        /// <param name="tolerance">Допуск расстояния при проверке</param>
+        public static bool IsPerpendicularTo(this Line line, Line checkedLine, double tolerance = Tolerance)
+        {
+            return IsPerpendicularTo(line.Direction, checkedLine.Direction, tolerance);
+        }
+        
+        /// <summary>
+        /// Проверка перпендикулярности двух векторов
+        /// </summary>
+        /// <param name="vector">Первый вектор</param>
+        /// <param name="checkedVector">Второй вектор</param>
+        /// <param name="tolerance">Допуск расстояния при проверке</param>
+        public static bool IsPerpendicularTo(this XYZ vector, XYZ checkedVector, double tolerance = Tolerance)
+        {
+            return Math.Abs(Math.Abs(vector.DotProduct(checkedVector))) < tolerance;
+        }
 
         /// <summary>
         /// Лежат ли текущий и проверяемый отрезок на одной прямой. 
