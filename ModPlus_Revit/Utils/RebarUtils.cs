@@ -114,7 +114,7 @@
         /// арматуры, обозначенной нормалью</param>
         /// <param name="includeFirstBar">Определяет, показан ли первый прут в наборе арматуры</param>
         /// <param name="includeLastBar">Определяет, показан ли последний прут в наборе арматуры</param>
-        public static void Set(
+        public static void SetLayoutAsFixedNumber(
             this Rebar rebar,
             int numberOfBarPositions,
             double arrayLength,
