@@ -34,17 +34,26 @@
                     continue;
                 
                 if (referenceArray.IsEmpty)
-                    referenceArray.Append(dimension.References.get_Item(i).FixGridReference(doc));
+                    referenceArray.Append(dimension.References.get_Item(i).FixReference(doc));
  
-                referenceArray.Append(dimension.References.get_Item(i + 1).FixGridReference(doc));
+                referenceArray.Append(dimension.References.get_Item(i + 1).FixReference(doc));
             }
  
             return referenceArray.Size < dimension.References.Size;
         }
 
-        private static Reference FixGridReference(this Reference reference, Document doc)
+        private static Reference FixReference(this Reference reference, Document doc)
         {
-            return doc.GetElement(reference) is Grid grid ? new Reference(grid) : reference;
+            var element = doc.GetElement(reference);
+            switch (element)
+            {
+                case Grid grid:
+                    return new Reference(grid);
+                case Level level:
+                    return new Reference(level);
+                default:
+                    return reference;
+            }
         }
     }
 }
