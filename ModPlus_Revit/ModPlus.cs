@@ -62,7 +62,7 @@
                     WebLicenseServerClient.Instance.Start(SupportedProduct.Revit);
 
                 // user info
-                AuthorizationOnStartup();
+                UserInfoService.ProductStartupAuthorization();
 
 #if !R2017 && !R2018
                 application.Idling += ApplicationOnIdling;
@@ -291,27 +291,7 @@
                 }
             }
         }
-
-        private static async void AuthorizationOnStartup()
-        {
-            try
-            {
-                await UserInfoService.GetUserInfoAsync();
-                var userInfo = UserInfoService.GetUserInfoResponseFromHash();
-                if (userInfo != null)
-                {
-                    if (!userInfo.IsLocalData && !await ModPlusAPI.Web.Connection.HasAllConnectionAsync(3))
-                    {
-                        Variables.UserInfoHash = string.Empty;
-                    }
-                }
-            }
-            catch (Exception exception)
-            {
-                ExceptionBox.Show(exception);
-            }
-        }
-
+        
         private Color GetColorFromSettings(string key)
         {
             try
